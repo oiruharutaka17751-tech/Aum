@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌 สำหรับเธอ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background: #fff0f5;
+  }
+
+  /* ===== CHECKERED BACKGROUND ===== */
+  .page {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    overflow: hidden;
+  }
+  .page.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .checkered-bg {
+    background-color: #ffd6e7;
+    background-image:
+      linear-gradient(45deg, #ffb3d1 25%, transparent 25%),
+      linear-gradient(-45deg, #ffb3d1 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ffb3d1 75%),
+      linear-gradient(-45deg, transparent 75%, #ffb3d1 75%);
+    background-size: 40px 40px;
+    background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+  }
+
+  /* floating hearts deco */
+  .hearts-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .heart-float {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: floatUp 6s linear infinite;
+    opacity: 0.35;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.35; }
+    90%  { opacity: 0.35; }
+    100% { transform: translateY(-10vh) rotate(20deg); opacity: 0; }
+  }
+
+  /* ===== PAGE 1 ===== */
+  #page1 .card {
+    background: rgba(255,255,255,0.88);
+    border: 3px solid #ff85b3;
+    border-radius: 28px;
+    padding: 3rem 3.5rem;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(255,100,160,0.2);
+    position: relative;
+    z-index: 2;
+    animation: popIn 0.8s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .main-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 600;
+    color: #d63a6e;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    font-size: 1.1rem;
+    color: #e8779a;
+    margin-bottom: 2rem;
+  }
+  .deco-star {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: spin 4s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== BUTTONS ===== */
+  .btn-next {
+    background: linear-gradient(135deg, #ff6b9d, #ff85b3);
+    color: white;
+    border: none;
+    padding: 0.85rem 2.5rem;
+    border-radius: 50px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 18px rgba(255,107,157,0.4);
+    letter-spacing: 0.5px;
+  }
+  .btn-next:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 28px rgba(255,107,157,0.5);
+  }
+  .btn-next:active { transform: scale(0.97); }
+
+  /* ===== PAGES 2-4 (fade-in text) ===== */
+  .story-page {
+    background: rgba(255,255,255,0.92);
+    border-radius: 24px;
+    padding: 3rem 3.5rem;
+    max-width: 680px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    border: 2px solid #ffaece;
+    box-shadow: 0 6px 32px rgba(255,100,160,0.15);
+  }
+  .story-text {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    color: #c23f6d;
+    line-height: 1.9;
+    font-weight: 400;
+    margin-bottom: 2.5rem;
+    min-height: 120px;
+  }
+  .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateX(-22px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .word.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .story-btn-wrap {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .story-btn-wrap.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .page-num {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 0.85rem;
+    color: #e8a0bb;
+  }
+
+  /* ===== PAGE 5 (question) ===== */
+  #page5 .question-card {
+    background: rgba(255,255,255,0.93);
+    border: 3px solid #ff85b3;
+    border-radius: 28px;
+    padding: 3rem 3.5rem;
+    text-align: center;
+    max-width: 560px;
+    width: 90%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 8px 40px rgba(255,100,160,0.2);
+    animation: popIn 0.7s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .question-text {
+    font-family: 'Prompt', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 600;
+    color: #d63a6e;
+    margin-bottom: 2.5rem;
+  }
+  .btn-group { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; }
+
+  .btn-yes {
+    background: linear-gradient(135deg, #ff4d8d, #ff6bab);
+    color: white;
+    border: none;
+    padding: 0.9rem 2.8rem;
+    border-radius: 50px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255,80,140,0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-yes:hover {
+    transform: scale(1.08) translateY(-3px);
+    box-shadow: 0 8px 30px rgba(255,80,140,0.55);
+  }
+
+  .btn-maybe {
+    background: white;
+    color: #d63a6e;
+    border: 2.5px solid #ff85b3;
+    padding: 0.9rem 2.8rem;
+    border-radius: 50px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: absolute;
+  }
+  .btn-maybe:hover { box-shadow: 0 4px 16px rgba(255,130,180,0.3); }
+
+  /* ===== PAGE 6 (success) ===== */
+  #page6 .success-card {
+    background: rgba(255,255,255,0.93);
+    border: 3px solid #ff6bab;
+    border-radius: 28px;
+    padding: 3rem 3.5rem;
+    text-align: center;
+    max-width: 520px;
+    width: 90%;
+    position: relative;
+    z-index: 2;
+    animation: popIn 0.8s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .success-emoji { font-size: 4rem; display: block; margin-bottom: 1rem; animation: bounce 1s ease infinite; }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .success-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #d63a6e;
+    margin-bottom: 0.8rem;
+  }
+  .success-sub { font-size: 1.1rem; color: #e8779a; }
+
+  /* ===== PAGE 7 (feedback) ===== */
+  #page7 .feedback-card {
+    background: rgba(255,255,255,0.93);
+    border: 2px solid #ffaece;
+    border-radius: 24px;
+    padding: 2.5rem 3rem;
+    max-width: 600px;
+    width: 92%;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 6px 30px rgba(255,100,160,0.12);
+  }
+  .feedback-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #d63a6e;
+    margin-bottom: 0.5rem;
+  }
+  .feedback-sub { font-size: 0.95rem; color: #e8a0bb; margin-bottom: 1.5rem; }
+  textarea {
+    width: 100%;
+    border: 2px solid #ffbdd6;
+    border-radius: 14px;
+    padding: 1rem;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1rem;
+    color: #c23f6d;
+    background: #fff8fb;
+    resize: vertical;
+    min-height: 130px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1.2rem;
+  }
+  textarea:focus { border-color: #ff6bab; }
+  textarea::placeholder { color: #f0b8cf; }
+  .btn-send {
+    background: linear-gradient(135deg, #ff6b9d, #ff4d8d);
+    color: white;
+    border: none;
+    padding: 0.85rem 2.5rem;
+    border-radius: 50px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(255,80,140,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  .btn-send:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,80,140,0.5); }
+  .btn-send:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .send-status { margin-top: 0.8rem; font-size: 0.95rem; min-height: 1.2em; color: #d63a6e; }
+
+  /* progress dots */
+  .progress-dots {
+    position: fixed;
+    bottom: 1.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 99;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ffb3d1;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .dot.active { background: #d63a6e; transform: scale(1.4); }
+
+  /* ribbon deco */
+  .ribbon {
+    position: absolute;
+    top: -16px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(90deg, #ff6bab, #ff9dc8);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 5px 20px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEARTS BG shared -->
+<div class="hearts-bg" id="heartsBg"></div>
+
+<!-- PROGRESS DOTS -->
+<div class="progress-dots" id="dots"></div>
+
+<!-- ===== PAGE 1 ===== -->
+<div class="page checkered-bg active" id="page1">
+  <div class="card">
+    <span class="deco-star">✿</span>
+    <h1 class="main-title">อ้ามมมมม กดเข้ามาได้แสดงว่าHaruเลิกอู้งานละสินะ</h1>
+    <p class="subtitle">มีเรื่องอยากบอกเธอสักเรื่อง...</p>
+    <button class="btn-next" onclick="goTo(2)">ไปต่อ ›</button>
+  </div>
+</div>
+
+<!-- ===== PAGE 2 ===== -->
+<div class="page checkered-bg" id="page2">
+  <div class="story-page">
+    <div class="ribbon">💌 เรื่องของเรา</div>
+    <span class="page-num">1 / 3</span>
+    <div class="story-text" id="text2"></div>
+    <div class="story-btn-wrap" id="btn2">
+      <button class="btn-next" onclick="goTo(3)">ไปต่อ ›</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 3 ===== -->
+<div class="page checkered-bg" id="page3">
+  <div class="story-page">
+    <div class="ribbon">💌 เรื่องของเรา</div>
+    <span class="page-num">2 / 3</span>
+    <div class="story-text" id="text3"></div>
+    <div class="story-btn-wrap" id="btn3">
+      <button class="btn-next" onclick="goTo(4)">ไปต่อ ›</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ===== PAGE 4 ===== -->
+<div class="page checkered-bg" id="page4">
+  <div class="story-page">
+    <div class="ribbon">💌 เรื่องของเรา</div>
+    <span class="page-num">3 / 3</span>
+    <div class="story-text" id="text4"></div>
+    <div class="story-btn-wrap" id="btn4">
+      <button class="btn-next" onclick="goTo(5)">ถามเธอสักอย่าง ›</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 5 ===== -->
+<div class="page checkered-bg" id="page5">
+  <div class="question-card">
+    <p class="question-text">ให้ผม.... ลองเป็นอนาคตที่ดีให้พี่ได้ไหมครับ</p>
+    <div class="btn-group" id="btnGroup5" style="position:relative; min-height:60px;">
+      <button class="btn-yes" onclick="goTo(6)">ได้สิ</button>
+      <button class="btn-maybe" id="btnMaybe" onclick="escapeMaybe()">ไม่ให้</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 6 (YES!) ===== -->
+<div class="page checkered-bg" id="page6">
+  <div class="success-card">
+    <span class="success-emoji">🎉</span>
+    <h2 class="success-title">ไม่รุ้แหละ บังคับ ฮ่าๆ</h2>
+    <p class="success-sub">ผมเป็นของพี่แล้วนะ<br>ขอบคุณนะ 🌸</p>
+  </div>
+</div>
+
+<!-- ===== PAGE 7 (FEEDBACK) ===== -->
+<div class="page checkered-bg" id="page7">
+  <div class="feedback-card">
+    <div class="ribbon">💬 ความคิดเห็น</div>
+    <br><br>
+    <h2 class="feedback-title">อยากบอกอะไรเพิ่มเติมไหม?</h2>
+    <p class="feedback-sub">เขียนมาได้เลยนะ จะอ่านทุกคำเลย ✨</p>
+    <textarea id="feedbackText" placeholder="เขียน..."></textarea>
+    <button class="btn-send" id="sendBtn" onclick="sendFeedback()">ส่ง 💌</button>
+    <div class="send-status" id="sendStatus"></div>
+  </div>
+</div>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ========= CONFIG — แก้ตรงนี้ =========
+  const EMAILJS_PUBLIC_KEY  = 'O-TFsi4bW8K7D119L';   // Public Key จาก EmailJS
+  const EMAILJS_SERVICE_ID  = 'service_kel28zp';   // Service ID
+  const EMAILJS_TEMPLATE_ID = 'template_xhxo5sc';  // Template ID
+  const TO_EMAIL = 'oiru.harutaka17751@gmail.com';
+  // =======================================
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  const TOTAL_PAGES = 7;
+  let currentPage = 1;
+
+  // Progress dots
+  const dotsEl = document.getElementById('dots');
+  for (let i = 1; i <= TOTAL_PAGES; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 1 ? ' active' : '');
+    d.id = 'dot' + i;
+    dotsEl.appendChild(d);
+  }
+
+  function goTo(n) {
+    document.getElementById('page' + currentPage).classList.remove('active');
+    document.getElementById('dot' + currentPage).classList.remove('active');
+    currentPage = n;
+    document.getElementById('page' + n).classList.add('active');
+    document.getElementById('dot' + n).classList.add('active');
+    if (n >= 2 && n <= 4) startFadeIn(n);
+  }
+
+  // ===== Story texts =====
+  const stories = {
+    2: 'คือว่านะ ผมคิดถึงพี่ทุกวัน ไม่ว่าจะเจอเรื่องอะไร ก็อยากเล่าให้พี่ฟังก่อนเสมอ ตอนนั้นถึงรู้ว่า พี่สำคัญกับผมมากกว่าที่คิด อยากจะมีพี่ไปตลอดจริงๆ ',
+    3: 'เรื่องที่ลำบากใจหรือน้อยใจมันก็มี ผมแค่รู้สึกน้อยใจพี่เหมือนตัวเองไม่ได้สำคัญขนาดนั้นผมแค่รู้สึกช่วงหลังๆมา ตัวเองจากที่เคยอยู่ที่1ตอนนั้นเหมือนอยุ่อันดับท้ายๆ แต่ก็เข้าใจได้ว่าพี่งานยุ่งแค่ไหน ผมก็ไม่ค่อยว่าง โดนงานที่วิลัยรุ่มกระเด้า5345345',
+    4: 'แต่ผมก็ไม่อยากทำให้เรื่องที่ผ่านมาหรืออะไรเล็กๆน้อย มันทำให้ผมตัดใจจากพี่ ไม่อยากให้เกิด ผมอยากให้พี่มีอนาคตที่ดี ฉะนั้น สวัสดีครับ ผม ชื่ออนาคต'
+  };
+
+  function startFadeIn(pageNum) {
+    const el = document.getElementById('text' + pageNum);
+    const btnWrap = document.getElementById('btn' + pageNum);
+    el.innerHTML = '';
+    btnWrap.classList.remove('show');
+
+    const raw = stories[pageNum];
+    const words = raw.split(' ');
+    words.forEach((w, i) => {
+      const span = document.createElement('span');
+      span.className = 'word';
+      span.textContent = w + ' ';
+      el.appendChild(span);
+      setTimeout(() => span.classList.add('show'), 120 + i * 90);
+    });
+    setTimeout(() => btnWrap.classList.add('show'), 120 + words.length * 90 + 400);
+  }
+
+  // ===== Floating hearts =====
+  const hBg = document.getElementById('heartsBg');
+  const hEmojis = ['🌸','💕','✿','💗','🌷','💖'];
+  for (let i = 0; i < 18; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart-float';
+    h.textContent = hEmojis[i % hEmojis.length];
+    h.style.left = (Math.random() * 100) + 'vw';
+    h.style.animationDelay = (Math.random() * 6) + 's';
+    h.style.animationDuration = (4 + Math.random() * 4) + 's';
+    h.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+    hBg.appendChild(h);
+  }
+
+  // ===== Maybe button escape =====
+  function escapeMaybe() {
+    const btn = document.getElementById('btnMaybe');
+    const group = document.getElementById('btnGroup5');
+    const gRect = group.getBoundingClientRect();
+    const maxX = gRect.width - 160;
+    const maxY = window.innerHeight - gRect.top - 70;
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    btn.style.left = x + 'px';
+    btn.style.top  = y + 'px';
+  }
+
+  // ===== Send feedback =====
+  function sendFeedback() {
+    const feedback = document.getElementById('feedbackText').value.trim();
+    const btn = document.getElementById('sendBtn');
+    const status = document.getElementById('sendStatus');
+
+    btn.disabled = true;
+    btn.textContent = 'กำลังส่ง...';
+    status.textContent = '';
+
+    const params = {
+      to_email: TO_EMAIL,
+      message: feedback || '(ไม่ได้ใส่ข้อความ)',
+      reply: 'เธอตอบ "เป็น" แล้ว 💕 และส่งข้อเสนอแนะมาด้วย',
+    };
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
+      .then(() => {
+        status.textContent = '✅ ส่งแล้วนะ ขอบคุณที่บอก! 💌';
+        btn.textContent = 'ส่งแล้ว ✓';
+      })
+      .catch((err) => {
+        console.error(err);
+        status.textContent = '❌ ส่งไม่สำเร็จ กรุณาตั้งค่า EmailJS ก่อนนะคะ';
+        btn.disabled = false;
+        btn.textContent = 'ลองใหม่อีกครั้ง';
+      });
+  }
+
+  // Page 6 → Page 7 after 2.5s
+  const origGoTo = goTo;
+  window.goTo = function(n) {
+    if (n === 6) {
+      origGoTo(6);
+      setTimeout(() => origGoTo(7), 2800);
+    } else {
+      origGoTo(n);
+    }
+  };
+</script>
+</body>
+</html>
